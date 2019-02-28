@@ -39,4 +39,5 @@ app.get('/auth/logout', ac.logout)
 // TREASURE ENPOINTS
 app.get('/api/treasure/dragon', tc.dragonTreasure)
 app.get('/api/treasure/user', auth.usersOnly, tc.getUserTreasure)
+app.get('/api/treasure/all', auth.usersOnly, tc.getAllTreasure)
 app.post('/api/treasure/user', auth.usersOnly, tc.addUserTreasure)
