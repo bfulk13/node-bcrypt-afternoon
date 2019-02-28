@@ -1,4 +1,7 @@
 require('dotenv').config();
+const ac = require('./controllers/authController')
+const tc = require('./controllers/treasureController')
+
 const express = require('express');
 const session = require('express-session');
 const massive = require('massive');
@@ -7,26 +10,31 @@ const { CONNECTION_STRING, SESSION_SECRET, SERVER_PORT } = process.env;
 
 const app = express();
 
-// CONTROLLERS
-const ac = require('./controllers/authController');
-
-// MIDDLEWARE
 app.use(bodyParser.json())
+
 app.use(session({
-    secret: SESSION_SECRET,
-    resave: true,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 1000 * 60 * 60 * 24
-    }
+   secret: SESSION_SECRET,
+   resave: false,
+   saveUninitialized: false,
+   cookie: {
+       maxAge: 1000000000000
+   }
 }))
 
-// CONNECTION TO DB
 massive(CONNECTION_STRING).then(db => {
-    app.set(db, 'db')
-    console.log(`db is live`)
-    app.listen(SERVER_PORT, () => console.log(`Port ${SERVER_PORT} reporting for booty!`))
-})
+   app.set('db', db)
+   console.log('db is live')
 
-// ENDPOINTS
+   app.listen(SERVER_PORT, () => {
+       console.log(`${SERVER_PORT} reporting for booty!`)
+   })
+}).catch(err => console.log(err) );
+
+// AUTH ENDPOINTS
 app.post('/auth/register', ac.register)
+app.post('/auth/login', ac.login)
+app.get('/auth/logout', ac.logout)
+
+// TREASURE ENPOINTS
+app.get('/api/treasure/dragon', tc.dragonTreasure)
+app.get('/api/treasure/user', tc.getUserTreasure)
