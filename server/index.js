@@ -1,6 +1,7 @@
 require('dotenv').config();
 const ac = require('./controllers/authController')
 const tc = require('./controllers/treasureController')
+const auth = require('./middleware/authMIddleware')
 
 const express = require('express');
 const session = require('express-session');
@@ -37,4 +38,5 @@ app.get('/auth/logout', ac.logout)
 
 // TREASURE ENPOINTS
 app.get('/api/treasure/dragon', tc.dragonTreasure)
-app.get('/api/treasure/user', tc.getUserTreasure)
+app.get('/api/treasure/user', auth.usersOnly, tc.getUserTreasure)
+app.post('/api/treasure/user', auth.usersOnly, tc.addUserTreasure)
